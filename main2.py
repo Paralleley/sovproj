@@ -1,55 +1,48 @@
-
 from player import *
 from pygame import *
 
-
-
-WIN_WIDTH = 800  # Ширина создаваемого окна
-WIN_HEIGHT = 640  # Высота
-hero = Player(70, 300) # создаем героя по (x,y) координатам
-BACKGROUND_COLOR = "#1E90FF"
-DISPLAY = (WIN_WIDTH, WIN_HEIGHT)  # Группируем ширину и высоту в одну переменную
+WIN_WIDTH = 760
+WIN_HEIGHT = 520
+hero = Player(0, 230)
+BACKGROUND_COLOR = "#DAA520"
+DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 block = pygame.image.load("block.jpg")
+monet = pygame.image.load("монета.jpg")
 PLATFORM_WIDTH = 20
 PLATFORM_HEIGHT = 20
 timer = pygame.time.Clock()
-level_tex = []
-level = [
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    " " * 15 + "-" * 10 + " " * 15,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40,
-    "-" * 40]
+
 
 
 def main():
+    level = [
+        " " * 2 + "-" + 32 * "-" + "-" + " " * 2,
+        " " * 2 + "-" + " " * 17 + "-" * 5 + " " * 10 + "-" + " " * 2,
+        " " * 2 + "-" + " " * 17 + "-" * 5 + " " * 10 + "-" + " " * 2,
+        " " * 2 + "-" + " " * 17 + "-" * 5 + " " * 10 + "-" + " " * 2,
+        " " * 2 + "-------    ----   -----   ----   " + "-" + " " * 2,
+        " " * 2 + "-------    ----   -----   ----   " + "-" + " " * 2,
+        " " * 2 + "-------    ----   -----   ----   " + "-" + " " * 2,
+        " " * 2 + "-------    ----   -----   ----   " + "-" + " " * 2,
+        " " * 2 + "-          ----   -----   ----   " + "-" + " " * 2,
+        " " * 2 + "-          ----   -----          " + "-" + " " * 2,
+        " " * 2 + "           ----   -----           " + " " * 2,
+        " " * 2 + "                  -----           " + " " * 2,
+        " " * 2 + "                                  " + " " * 2,
+        " " * 2 + "                          ----    " + " " * 2,
+        " " * 2 + "                          ----    " + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----     -----    -----          " + "-" + " " * 2,
+        " " * 2 + "----              -----          " + "-" + " " * 2,
+        " " * 2 + "----" + " " * 14 + "-" * 5 + " " * 10 + "-" + " " * 2,
+        " " * 2 + "----" + " " * 14 + "-" * 5 + " " * 10 + "-" + " " * 2,
+        " " * 2 + "-" + 32 * "-" + "-" + " " * 2,
+    ]
     left = right = up = down = False
     pygame.init()  # Инициация PyGame, обязательная строчка
     screen = pygame.display.set_mode(DISPLAY)  # Создаем окошко
@@ -57,6 +50,10 @@ def main():
     run = True
 
     while run:  # Основной цикл программы
+        if hero.rect.x >= 700:
+            level.reverse()
+            hero.rect.x = 0
+            hero.rect.y = 230
         timer.tick(100)
         for e in pygame.event.get():  # Обрабатываем события
             if e.type == QUIT:
@@ -80,31 +77,41 @@ def main():
                 up = False
             if e.type == KEYUP and e.key == K_DOWN:
                 down = False
+        # коллизия
         if hero.rect.y % 20 == 0:
-            if level[(hero.rect.y - 20) // 20][hero.rect.x // 20] == '-':
-                up = False
-            elif level[(hero.rect.y + 40) // 20][hero.rect.x // 20] == '-':
-                down = False
+            if up:
+
+                if level[(hero.rect.y - 20) // 20][hero.rect.x // 20] == '-' or level[(hero.rect.y - 20) // 20][
+                    (hero.rect.x + 20) // 20] == '-' or level[(hero.rect.y - 20) // 20][
+                    (hero.rect.x + 40) // 20] == '-':
+                    up = False
+            if down:
+                if level[(hero.rect.y + 40) // 20][hero.rect.x // 20] == '-' or level[(hero.rect.y + 40) // 20][
+                    (hero.rect.x + 20) // 20] == '-' or level[(hero.rect.y + 40) // 20][
+                    (hero.rect.x + 40) // 20] == '-':
+                    down = False
         if hero.rect.x % 20 == 0:
-            if level[hero.rect.y // 20][hero.rect.x // 20] == '-':
+            if level[hero.rect.y // 20][(hero.rect.x - 20) // 20] == '-' or level[(hero.rect.y + 20) // 20][
+                (hero.rect.x - 20) // 20] == '-' or level[(hero.rect.y + 40) // 20][
+                (hero.rect.x - 20) // 20] == '-':
                 left = False
-            elif level[hero.rect.y // 20][(hero.rect.x + 40) // 20] == '-':
+            elif level[hero.rect.y // 20][(hero.rect.x + 40) // 20] == '-' or level[(hero.rect.y + 20) // 20][
+                (hero.rect.x + 40) // 20] == '-' or level[(hero.rect.y + 40) // 20][
+                (hero.rect.x + 40) // 20] == '-':
                 right = False
         screen.fill(BACKGROUND_COLOR)
-        x = y = 0  # координаты
+        x = y = 0
+        # вывод уровня на экран
         for row in level:
             for col in row:
                 if col == "-":
                     screen.blit(block, (x, y))
-                    quad = pygame.Rect(x, y, 20, 20)
-                    level_tex.append(quad)
-                x += PLATFORM_WIDTH  # блоки платформы ставятся на ширине блоков
-            y += PLATFORM_HEIGHT  # то же самое и с высотой
+                x += PLATFORM_WIDTH
+            y += PLATFORM_HEIGHT
             x = 0
-        hero.update(left, right, up, down)  # передвижение
+        hero.update(left, right, up, down)
         hero.draw(screen)
         pygame.display.update()
-
 
 
 if __name__ == "__main__":
